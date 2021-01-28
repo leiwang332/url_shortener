@@ -18,9 +18,12 @@ Application will run on localhost:12121
 
 == Test on command line ==
 - Create a new short url
-$ curl -vX POST localhost:12121/short_url?<long-url>
+$ curl -v POST \
+  -H "Content-Type: text/plain" \
+  -d "url=<long URL>" \
+  localhost:12121/short_url
 
-- Retrieve the actual URL
+- Retrieve the long URL
 $ curl localhost:12121/short_url/<hash>
 
 Example:
