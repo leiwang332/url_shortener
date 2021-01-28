@@ -1,0 +1,48 @@
+URL Shortner demo application using SpringBoot + Redis
+
+Shortening algorithm is based on murmur32 Hashing with current timestamp as seed for randomness.
+Redis is used as a simple database to store the short => long URL mapping. Repeatedly creating
+passing the same long URL gives different short URLs with the randomness. If we remove the
+timestamp from murmur32 hash, it will always return the same short URL for the same long URL.
+
+== Prerequisite ==
+1. Install Redis (assuming OSX):
+$ brew install redis
+$ brew services start redis
+$ redis-cli ping # test connection
+
+== Build & Run ==
+$ ./mvnw spring-boot:run
+
+Application will run on localhost:12121
+
+== Test on command line ==
+- Create a new short url
+$ curl -vX POST localhost:12121/short_url?<long-url>
+
+- Retrieve the actual URL
+$ curl localhost:12121/short_url/<hash>
+
+Example:
+$ curl -v POST \
+  -H "Content-Type: text/plain" \
+  -d "url=https://www.google.com/" \
+  localhost:12121/short_url
+> POST /short_url HTTP/1.1
+> Host: localhost:12121
+> User-Agent: curl/7.64.1
+> Accept: */*
+> Content-Type: text/plain
+> Content-Length: 27
+>
+* upload completely sent off: 27 out of 27 bytes
+< HTTP/1.1 200
+< Content-Type: text/plain;charset=UTF-8
+< Content-Length: 31
+http://localhost:12121/short_url/cac87a2c* Closing connection 0
+
+
+=== Test with HTML ==
+Open test.html in this directory using any web browser and type in the long URL to be shortened.
+Then the shortened URL will be printed on the page. Pasting this URL into the browser address bar
+will take you to the web page of the original long URL.
